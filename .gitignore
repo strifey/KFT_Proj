@@ -4,3 +4,6 @@ cmake_install.cmake
 install_manifest.txt
 *.swp
 *.swo
+*.o
+kftserver
+kftclient
