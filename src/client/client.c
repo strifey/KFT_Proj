@@ -1,11 +1,14 @@
 #include "client.h"
 
-int* bind_socket(char* port, int debug){
+int* setup_transfer(char* ip, char* port, int _debug, int _max_packet_size){
+	max_packet_size = _max_packet_size;
+	recv_buff = malloc(_max_packet_size);
+	send_buff = malloc(_max_packet_size);
+
 	memset(&connInfo, 0, sizeof connInfo);
 	connInfo.ai_family = AF_INET;
-	connInfo.ai_socktype = SOCK_STREAM;
-	connInfo.ai_flags = AI_PASSIVE;
-	getaddrinfo(NULL, port, &connInfo, &srvInfo);
+	connInfo.ai_socktype = SOCK_DGRAM;
+	getaddrinfo(ip, port, &connInfo, &srvInfo);
 
 	/*for loop to determine corr addr info*/
 	for(pInfo = srvInfo; pInfo != NULL; pInfo = pInfo->ai_next){
@@ -14,12 +17,7 @@ int* bind_socket(char* port, int debug){
 			perror("Failed to create socket\n");
 			continue;
 		}
-		if(bind(sock, pInfo->ai_addr, pInfo->ai_addrlen) < 0){
-			close(sock);
-			perror("Failed to bind socket\n");
-			continue;
-		}
-		printf("Found a socket and bound\n");
+		printf("Created a socket to use.\n");
 		return &sock;
 	}
 	if(pInfo == NULL){
@@ -27,4 +25,8 @@ int* bind_socket(char* port, int debug){
 		return NULL;
 	}
 	return &sock;
+}
+
+int request_file(char *srv_fname, char *local_fname){
+	return 0;
 }

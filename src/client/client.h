@@ -10,10 +10,14 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include "../dropper.h"
 
 struct addrinfo connInfo, *srvInfo, *pInfo;
-int sock;
+char *recv_buff, *send_buff;
+int sock, send_size, max_packet_size;
 
-int* bind_socket(char* port, int debug);
+
+int* setup_transfer(char* ip, char* port, int _debug, int _max_packet_size);
+int request_file(char *srv_fname, char *local_fname);
 
 #endif

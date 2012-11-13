@@ -30,6 +30,6 @@ $(OUT_DIR_CLIENT)/%.o : $(SRC_DIR_CLIENT)/%.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 clean : 
-	rm -f ./bin/client/* ./bin/server/* kftclient kftserver
+	rm -f ./bin/client/*.o ./bin/server/*.o ./bin/*.o kftclient kftserver
 
 

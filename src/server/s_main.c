@@ -1,5 +1,4 @@
 #include "server.h"
-#include "../dropper.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,8 +8,6 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
-
-#define TIMEOUT_LEN 3
 
 void parse_parameters(int argc, char*argv[]);
 
@@ -28,8 +25,23 @@ int main(int argc, char*argv[]){
 	}
 	printf("Found a socket and bound\n");
 	while(1){
+		//reset
 		if(listen_and_accept() == -1){
 			perror("Error occurred while awaiting the initial receive. Closing.\n");
+			exit(1);
+		}
+		do{
+			//send next bit of file
+		}while(numbytes > 0);
+
+		if(!numbytes){
+			perror("Client closed connection\n");
+			exit(1);
+		}else if(numbytes == -1){
+			perror("An error occurred during file transfer\n");
+			exit(1);
+		}else if(numbytes == -2){
+			perror("Client connection timed out. Closing connection.\n");
 			exit(1);
 		}
 	}
