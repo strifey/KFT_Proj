@@ -60,6 +60,8 @@ ssize_t sendto_dropper(
 
    if (randomvalue < DROPPER_loss_percentage) {
        /* packet is lost --- do nothing, but make it look like success */
+	   if(debug)
+		   printf("Packet lost!\n");
        return(len);
    }
 
@@ -68,4 +70,3 @@ ssize_t sendto_dropper(
    return(nbytes);
 
 } /* sendto_dropper */
-

@@ -13,22 +13,24 @@
 #include <netinet/in.h>
 #include "../dropper.h"
 
-#define MAXBUFF 1000
-#define TIMEOUT_S 2
-#define TIMEOUT_U 500000
-#define ACK "ACK"
-#define NACK "NACK"
+#define INITBUFF 1000
+#define MAX_TRIES 5
+#define TIMEOUT_S 0
+#define TIMEOUT_U 100000
 
 struct addrinfo connInfo, *srvInfo, *pInfo;
-struct sockaddr_storage client_addr_info;
-int sock, curr_seq, numbytes;
-socklen_t c_addr_len;
-char recv_buff[MAXBUFF];
-char send_buff[MAXBUFF];
-unsigned int send_size;
+struct sockaddr_in client_addr_info;
+int sock, numbytes, fsize, debug;
+int c_addr_len, recv_size, final_ack, send_EOF;
+char *recv_buff;
+char *send_buff;
+unsigned int send_size, max_packet_size;
+char *curr_filename;
+char curr_seq;
+FILE *req_file;
 
-int* bind_socket(char* port, int);
+int *bind_socket(char *port);
 int listen_and_accept();
-void get_and_ack();
+int send_file();
 
 #endif
