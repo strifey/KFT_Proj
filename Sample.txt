@@ -1,0 +1,51 @@
+Client output if client receives file correctly:
+	"Time taken to tranfer 2s, 40123us
+	File successfully received"
+
+Client output if server times out/disconnects:
+	"Client timed out too many times waiting on server to respond."
+
+Server output if server sends file correctly:
+	"File sent successfully"
+
+Server output if client disconnects/times out during tranfers:
+	"Client timed-out during file transfer"
+
+In debug mode:
+	Each will print out relevant information such as what seq_num they're currently
+	waiting on, if they have to re-send a packet, if they didn't receive any data, 
+	etc etc.
+
+	Sample debug output from server:
+		Seq 1, received. Looking for 1. Sending next packet
+		Seq 1, received. Looking for 0. Resending previous packet
+		Seq 1, received. Looking for 0. Resending previous packet
+		Packet lost!
+		Seq 0, received. Looking for 0. Sending next packet
+		Seq 0, received. Looking for 1. Resending previous packet
+		Seq 1, received. Looking for 1. Sending next packet
+		Seq 1, received. Looking for 0. Resending previous packet
+		Packet lost!
+		Nothing to read. Resending packet. Try 0
+		Seq 1, received. Looking for 0. Resending previous packet
+		Seq 0, received. Looking for 0. Sending next packet
+
+	Sample debug output from client:
+		Seq 1, received. Looking for 0. Resending previous ACK
+		Seq 0, received. Looking for 0. Sending ACK
+		Seq 0, received. Looking for 1. Resending previous ACK
+		Seq 1, received. Looking for 1. Sending ACK
+		Seq 0, received. Looking for 0. Sending ACK
+		Seq 1, received. Looking for 1. Sending ACK
+		Nothing to read. Resending packet. Try 0
+		Seq 0, received. Looking for 0. Sending ACK
+		Seq 0, received. Looking for 1. Resending previous ACK
+		Seq 1, received. Looking for 1. Sending ACK
+		Seq 1, received. Looking for 0. Resending previous ACK
+		Seq 0, received. Looking for 0. Sending ACK
+		Seq 0, received. Looking for 1. Resending previous ACK
+		Packet lost!
+		Seq 1, received. Looking for 1. Sending ACK
+		Seq 0, received. Looking for 0. Sending ACK
+		Seq 1, received. Looking for 1. Sending ACK
+
