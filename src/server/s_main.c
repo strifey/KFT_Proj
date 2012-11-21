@@ -23,7 +23,8 @@ int main(int argc, char*argv[]){
 		perror("Could not connect to a socket. Closing\n");
 		exit(1);
 	}
-	printf("Found a socket and bound\n");
+	if(debug)
+		printf("Found a socket and bound\n");
 	while(1){
 		int send_result = listen_and_accept();
 		if(!send_result)
@@ -42,8 +43,8 @@ void parse_parameters(int argc, char*argv[]){
 	}
 	if(argc == 4){
 		if(strcmp(argv[3], "-d")){
-		perror("Invalid final parameter. Must be -d flag for debug mode.\n");
-		exit(1);
+			perror("Invalid final parameter. Must be -d flag for debug mode.\n");
+			exit(1);
 		}
 		debug = 1;
 	}

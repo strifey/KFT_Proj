@@ -7,6 +7,7 @@ int* setup_transfer(char* ip, char* port){
 	recv_buff = malloc(sizeof(char)*max_packet_size);
 	send_buff = malloc(sizeof(char)*max_packet_size);
 	curr_seq = 0;
+	gettimeofday(&start_time, NULL);
 
 	memset(&connInfo, 0, sizeof connInfo);
 	connInfo.ai_family = AF_INET;
@@ -41,11 +42,9 @@ int request_file(char *srv_fname, char *local_fname){
 	send_buff[send_size] = '\0';
 
 	out_file = fopen(local_fname, "w");
-	do{
+	while(1){
 		int tries = 0;
 		for(; tries< MAX_TRIES ; tries++){
-			if(debug)
-				printf("Sending packet\n");
 			sendto_dropper(sock,send_buff, send_size, 0, pInfo->ai_addr, pInfo->ai_addrlen);
 			struct timeval tv;
 			tv.tv_sec = TIMEOUT_S;
@@ -76,22 +75,16 @@ int request_file(char *srv_fname, char *local_fname){
 			fclose(out_file);
 			return -1;
 		}
-
-		if(debug)
-			printf("Seq %d, received. %d bytes received\n", recv_buff[0], recv_size);
-
+			if(debug)
+				printf("Seq %d, received. Looking for %d. ", recv_buff[0], curr_seq);
 		//received previous packet, re-ACKING it.
 		if(recv_buff[0] != curr_seq){
 			if(debug)
-				printf("Incorrect seq val in packet. Re-ACKing previous seq num.\n");
+				printf("Resending previous ACK\n");
 		}
 		else{
-			if(debug){
-				printf("Correct seq val in packet, writing data to disk.\n");
-				/*recv_buff[recv_size] = '\0';*/
-				/*printf("Data in packet:\n\n %s\n\n", &recv_buff[1]);*/
-			}
-			//correct sequence val, reading in new data and ACKing
+			if(debug)
+				printf("Sending ACK\n");
 			//Write buffer to file
 			fwrite(&recv_buff[1], sizeof(char), recv_size-1, out_file);
 			memset(recv_buff, 0, max_packet_size);
@@ -103,14 +96,25 @@ int request_file(char *srv_fname, char *local_fname){
 			curr_seq ^= 1;
 			if(recv_size == 1){
 				if(debug)
-					printf("EOF received. Listening to confirm final ACK received\n");
+					printf("EOF received.\n");
 				break;
 			}
 		}
-	}while(1);
+	}
 
 	if(debug)
 		printf("File finished transferring. Closing file\n");
+	struct timeval end_time;
+	gettimeofday(&end_time, NULL);
+	int s_passed = end_time.tv_sec - start_time.tv_sec;
+	unsigned int us_passed =0;
+	if(end_time.tv_usec < start_time.tv_usec){
+		s_passed--;
+		us_passed = (1000000 + end_time.tv_usec) - start_time.tv_usec;
+	}
+	else
+		us_passed = end_time.tv_usec - start_time.tv_usec;
+	printf("Time taken to transfer file: %ds, %uus\n", s_passed, us_passed);
 	fclose(out_file);
 	close(sock);
 	return 0;

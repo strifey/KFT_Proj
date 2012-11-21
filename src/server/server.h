@@ -14,7 +14,7 @@
 #include "../dropper.h"
 
 #define INITBUFF 1000
-#define MAX_TRIES 5
+#define MAX_TRIES 10
 #define TIMEOUT_S 0
 #define TIMEOUT_U 100000
 

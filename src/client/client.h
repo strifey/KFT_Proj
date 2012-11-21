@@ -14,7 +14,7 @@
 #include "../dropper.h"
 
 #define MIN_PACKET_SIZE 25
-#define MAX_TRIES 5
+#define MAX_TRIES 10
 #define TIMEOUT_S 0
 #define TIMEOUT_U 100000
 
@@ -25,6 +25,7 @@ char *recv_buff, *send_buff, *s_max_packet_size;
 int sock, send_size, recv_size, max_packet_size, file_done, debug;
 char curr_seq;
 FILE *out_file;
+struct timeval start_time;
 
 
 int* setup_transfer(char* ip, char* port);

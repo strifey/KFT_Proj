@@ -18,14 +18,12 @@ int main(int argc, char*argv[]){
 	set_dropper(percent_loss);
 	setup_transfer(srv_ip, srv_port);
 	int result = request_file(srv_fname, local_fname);
-	if(debug){
-		if(!result)
-			printf("File successfully received!\n");
-		else if(result == -1)
-			printf("There was a connection issue during file transfer\n");
-		else if(result == -2)
-			printf("Client timed out too many times waiting on server to respond.\n");
-	}
+	if(!result)
+		printf("File successfully received!\n");
+	else if(result == -1)
+		printf("There was a connection issue during file transfer\n");
+	else if(result == -2)
+		printf("Client timed out too many times waiting on server to respond.\n");
 	return result;
 }
 

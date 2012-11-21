@@ -80,8 +80,6 @@ int send_file(){
 	for(;;){
 		int tries = 0;
 		for(; tries< MAX_TRIES ; tries++){
-			if(debug)
-				printf("Sending packet\n");
 			sendto_dropper(sock,send_buff, send_size, 0, (struct sockaddr *)&client_addr_info, c_addr_len);
 			struct timeval tv;
 			tv.tv_sec = TIMEOUT_S;
@@ -102,7 +100,6 @@ int send_file(){
 			return -2;
 		c_addr_len = sizeof(client_addr_info);
 		recv_size = recvfrom(sock, recv_buff, max_packet_size, 0, (struct sockaddr *) &client_addr_info, &c_addr_len);
-		printf("recv_size: %d, seq num: %d, ack char: %c", recv_size, recv_buff[0], recv_buff[1]);
 		if(!recv_size){
 			perror("Client closed connection\n");
 			return -1;
@@ -111,10 +108,10 @@ int send_file(){
 			perror("recv_from failed\n");
 			return -1;
 		}
-		if(debug)
-			printf("Seq %d, ACK received\n", recv_buff[0]);
 		//ACK for previous packet received. sending next one
 		if(recv_size == 2 && recv_buff[0] == curr_seq && recv_buff[1] == 'A'){
+			if(debug)
+				printf("Seq %d, received. Looking for %d. Sending next packet\n", recv_buff[0], curr_seq);
 			if(send_EOF){
 				//Final ACK, stopping
 				break;
@@ -134,6 +131,8 @@ int send_file(){
 					send_EOF = 1;
 			}
 		}
+		if(debug)
+			printf("Seq %d, received. Looking for %d. Resending previous packet\n", recv_buff[0], curr_seq);
 		//Either out of sequence or some other anomaly, resending old packet.
 	}
 	if(debug)
